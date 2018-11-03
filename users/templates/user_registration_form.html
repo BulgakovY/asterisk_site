@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form.errors }}
+    {{ form.as_ul }}
+    <input type="submit" value="Зарегистрировать">
+</form>
+{% endblock %}

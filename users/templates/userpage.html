@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block scripts %}
+    <script>
+    function format(source, params) {
+    $.each(params,function (i, n) {
+        source = source.replace(new RegExp("\\{" + i + "\\}", "g"), n);
+    });
+    return source;
+    };
+    function generatePassword() {
+    var length = 8,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+}
+
+    window.onload=function () {
+
+        $("#numbers_count_select").change(function () {
+            var count=Number($("#numbers_count_select option:selected" ).text());
+            var $form=$("#add_form");
+            $form.append($('<table>'));
+            //var $form=$('<form action="add_numbers/" method=POST><table>\n');
+            //$form.append($('<input type="hidden" name="csrfmiddlewaretoken" value="$csrf_token"/>'))
+            var begin_number=Number($("#begin_numeration option:selected" ).text());
+            for (i=1;i<=count;i++){
+                var next_number=begin_number+i;
+                var password=generatePassword();
+                var $input_field=$(format('<tr>\n<td><input type=text size=4 name=number{0} value={1}></td>\n<td><input type=text size=8 name=password{0} value={2}></td></tr>\n',[i,next_number,password]));
+                //alert($input_field);
+                $form.append($input_field)
+
+            }
+            $form.append($('</table><input type=Submit value="Создать">\n'));
+            $("#form_placeholder").html($form);
+
+        });
+    }
+    </script>
+{% endblock %}
+{% block content %}
+<p>Создайте номера виртуальноый АТС :</p>
+    <p>Введите начальную нумерацию :
+        <select name="begin_numeration" id="begin_numeration">
+        <option value="100">100</option>
+        <option value="200">200</option>
+        <option value="300">300</option>
+        <option value="400">400</option>
+        <option value="500">500</option>
+        <option value="600">600</option>
+        <option value="700">700</option>
+        <option value="800">800</option>
+        <option value="900">900</option>
+    </select>
+    </p>
+    <p>Введите количество номеров виртуальной АТС
+    <select name="numbers_count" id="numbers_count_select">
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    </p>
+    <div style="width: 200px; height: 200px; border: 1px solid red" id="form_placeholder">
+    <form action="add_numbers/" method=POST id="add_form">
+        {% csrf_token %}
+
+    </form>
+    </div>
+
+{% endblock %}
